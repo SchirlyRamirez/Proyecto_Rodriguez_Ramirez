@@ -3,15 +3,16 @@ package com.ejemplo.catalogo.adapter.out.persistence.config;
 import com.ejemplo.catalogo.adapter.out.persistence.persistence.ProductJpaEntity;
 import com.ejemplo.catalogo.adapter.out.persistence.persistence.ProductJpaRepository;
 import java.math.BigDecimal;
-import java.util.List;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Loads sample products at startup. Infrastructure concern: it uses the
- * Spring Data repository directly instead of going through the port.
+ * Fila 0: al arrancar existe un solo producto, el Cuaderno
+ * (productoId 1, precio 8.000, stock 60). Corre antes que las muestras.
  */
 @Component
+@Order(1)
 public class DataSeeder implements CommandLineRunner {
 
     private final ProductJpaRepository repository;
@@ -23,19 +24,9 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (repository.count() > 0) {
-            return; // data already exists: do not duplicate
+            return;
         }
-        repository.saveAll(List.of(
-            new ProductJpaEntity("Laptop Pro 14", "Portátil de 14 pulgadas",
-                new BigDecimal("1299.99"), 8, "electronica"),
-            new ProductJpaEntity("Mouse inalámbrico", "Bluetooth, 3 botones",
-                new BigDecimal("24.90"), 40, "electronica"),
-            new ProductJpaEntity("Silla ergonómica", "Soporte lumbar",
-                new BigDecimal("219.00"), 5, "hogar"),
-            new ProductJpaEntity("Lámpara LED", "Luz cálida regulable",
-                new BigDecimal("35.50"), 18, "hogar"),
-            new ProductJpaEntity("Café de especialidad", "Bolsa de 500 g",
-                new BigDecimal("14.75"), 60, "alimentos")
-        ));
+        repository.save(new ProductJpaEntity("Cuaderno", "Producto de la fila 0",
+            new BigDecimal("8000"), 60, "papeleria"));
     }
 }

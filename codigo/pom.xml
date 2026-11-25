@@ -41,6 +41,12 @@
       <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <!-- H2 en memoria (ADR-0001): arranque limpio sin Docker -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
 
     <!-- Pruebas (traen JUnit 5, Mockito y AssertJ) -->
     <dependency>
