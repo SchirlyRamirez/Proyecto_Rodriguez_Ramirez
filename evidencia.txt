@@ -1,0 +1,38 @@
+EVIDENCIA · Q1 / fila 0 · arquitectura hexagonal · Juan Esteban Rodríguez y Schirly Ramirez Lopez
+Salidas literales, copiadas sin editar.
+
+==== 1. Regla de arquitectura pasando (los 2 grep, en codigo/) ====
+$ grep -rn "import org.springframework\|import jakarta" src/main/java/com/ejemplo/catalogo/domain
+$ grep -rn "import com.ejemplo.catalogo.adapter" src/main/java/com/ejemplo/catalogo/application
+(sin salida: ninguna de las dos líneas imprime nada)
+
+==== 2. Regla con violación inducida (import de Spring en domain/model/Pedido.java), antes de git checkout ====
+$ grep -rn "import org.springframework\|import jakarta" src/main/java/com/ejemplo/catalogo/domain
+src/main/java/com/ejemplo/catalogo/domain/model/Pedido.java:3:import org.springframework.stereotype.Component;
+$ grep -rn "import com.ejemplo.catalogo.adapter" src/main/java/com/ejemplo/catalogo/application
+$ git checkout -- src/main/java/com/ejemplo/catalogo/domain/model/Pedido.java ; git status --short
+(árbol limpio, sin commit de la violación)
+
+==== 3. Muestra de la Hoja 1 (sobre la etiqueta hoja-1, perfil muestra1) ====
+PEDIDO 1 CONFIRMADO total=72000
+PEDIDO 2 CONFIRMADO total=76000
+PEDIDO 3 RECHAZADO total=0
+PEDIDO 4 CONFIRMADO total=311600
+
+==== 4. Muestra de la Hoja 2 (sobre la etiqueta final, perfil muestra2) ====
+PEDIDO 1 CONFIRMADO total=216000
+PEDIDO 2 CONFIRMADO total=220400
+PEDIDO 3 CONFIRMADO total=8000
+
+==== 5. git diff --name-status hoja-1 final ====
+$ git diff --name-status hoja-1 final
+A	codigo/src/main/java/com/ejemplo/catalogo/adapter/in/muestra/MuestraHoja2.java
+M	codigo/src/main/java/com/ejemplo/catalogo/domain/model/DescuentoPorVolumen.java
+A	codigo/src/test/java/com/ejemplo/catalogo/domain/model/DescuentoTramoNuevoTest.java
+
+==== 6. git log --format="%h %ad %an%d %s" --date=iso ====
+438fc1f 2026-11-25 13:37:51 -0500 Schirly Ramirez Lopez (HEAD -> main, tag: final) Hoja 2: tramo nuevo de descuento (3u -> d+5)
+15dce14 2026-11-25 13:36:55 -0500 Juan Esteban Rodríguez (tag: hoja-1) Hoja 1: pedidos, descuento por volumen, stock, muestra y pruebas
+d713e09 2026-11-25 13:35:54 -0500 Schirly Ramirez Lopez ADR-0001: arquitectura hexagonal (punto de partida: catalogo hexagonal)
+
+(El commit que agrega este archivo es posterior a esta salida.)
