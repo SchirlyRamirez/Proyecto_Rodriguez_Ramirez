@@ -1,0 +1,40 @@
+package com.ejemplo.catalogo.adapter.in.web.exception;
+
+import com.ejemplo.catalogo.domain.exception.ProductNotFoundException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    // ProductNotFoundException -> 404 Not Found
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ProblemDetail handleNotFound(ProductNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Producto no encontrado");
+        return problem;
+    }
+
+    // Falla @Valid -> 400 Bad Request con el error de cada campo
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidation(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new LinkedHashMap<>();
+        for (FieldError error :
+                ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST, "Los datos enviados no son válidos");
+        problem.setTitle("Error de validación");
+        problem.setProperty("errors", errors);
+        return problem;
+    }
+}
